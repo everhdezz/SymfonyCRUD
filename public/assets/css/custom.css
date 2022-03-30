@@ -1,0 +1,15 @@
+@import url(https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700|Roboto:300,400,500,600,700&display=swap);
+
+/*
+ *
+ * Layout Skins
+ *
+*/
+@import url(skins/header/base/light.css);
+@import url(skins/header/menu/light.css);
+@import url(skins/brand/dark.css);
+@import url(skins/aside/dark.css);
+
+.clickable-row[data-href] {
+	cursor: pointer;
+}
