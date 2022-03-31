@@ -44,7 +44,7 @@ class Category
     private $active;
 
     /**
-     * @ORM\Column(type="boolean", nullable=true, options={"default": 1})
+     * @ORM\Column(type="datetime")
      */
     private $createdAt;
 
