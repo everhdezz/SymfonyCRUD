@@ -51,6 +51,10 @@ class ProductsController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $repository->add($products);
 
+            $this->addFlash('message', [
+                'type' => 'success', 'message' => 'Se creó el registro exitosamente!'
+            ]);
+
             return $this->redirectToRoute('products.show', [ 'id' => $products->getId() ]);
         }
 
@@ -108,6 +112,10 @@ class ProductsController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $repository->add($product);
 
+            $this->addFlash('message', [
+                'type' => 'success', 'message' => 'Se editó el registro exitosamente!'
+            ]);
+
             return $this->redirectToRoute('products.show', [ 'id' => $product->getId() ]);
         }
 
@@ -123,6 +131,10 @@ class ProductsController extends AbstractController
     public function delete(ProductRepository $repository,  Product $product): Response
     {
         $repository->remove($product);
+
+        $this->addFlash('message', [
+            'type' => 'success', 'message' => 'Se eliminó el registro exitosamente!'
+        ]);
 
         return $this->redirectToRoute('products.index');
     }

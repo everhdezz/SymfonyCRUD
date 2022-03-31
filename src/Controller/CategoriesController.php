@@ -50,6 +50,10 @@ class CategoriesController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $repository->add($category);
 
+            $this->addFlash('message', [
+                'type' => 'success', 'message' => 'Se creó el registro exitosamente!'
+            ]);
+
             return $this->redirectToRoute('categories.show', [ 'id' => $category->getId() ]);
         }
 
@@ -73,6 +77,10 @@ class CategoriesController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $repository->add($category);
 
+            $this->addFlash('message', [
+                'type' => 'success', 'message' => 'Se editó el registro exitosamente!'
+            ]);
+
             return $this->redirectToRoute('categories.show', [ 'id' => $category->getId() ]);
         }
 
@@ -87,8 +95,20 @@ class CategoriesController extends AbstractController
      */
     public function delete(CategoryRepository $repository,  Category $category): Response
     {
-        $repository->remove($category);
+        try{
+            $repository->remove($category);
 
-        return $this->redirectToRoute('categories.index');
+            $this->addFlash('message', [
+                'type' => 'success', 'message' => 'Se eliminó el registro exitosamente!'
+            ]);
+
+            return $this->redirectToRoute('categories.index');
+        }catch(\Exception $e){
+            $this->addFlash('message', [
+                'type' => 'warning', 'message' => 'Para poder borrar este registro, es necesario eliminar toda la información ligada'
+            ]);
+
+            return $this->redirectToRoute('categories.index');
+        }
     }
 }

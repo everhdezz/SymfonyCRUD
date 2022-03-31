@@ -49,6 +49,12 @@
                     </div>
                 </div>
                 <div class="card-body">
+                    {% for flash_message in app.session.flashbag.get('message') %}
+                        <div class="alert alert-{{ flash_message.type }} dark alert-dismissible fade show" role="alert">
+                          <button type="button" class="btn-close close" data-bs-dismiss="alert" data-dismiss="alert" aria-label="Close">X</button>
+                          {{ flash_message.message }}
+                        </div>
+                    {% endfor %}
                     <table class="table table-hover">
                         <thead>
                             <tr>
