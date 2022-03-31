@@ -62,7 +62,7 @@ class Product
     private $brand;
 
     /**
-     * @ORM\ManyToOne(targetEntity=Category::class, inversedBy="products")
+     * @ORM\ManyToOne(targetEntity=Category::class, inversedBy="products", fetch="EAGER")
      */
     private $category;
 
