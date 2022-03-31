@@ -1,21 +1,21 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Productos{% endblock %}
+{% block title %}Categorias{% endblock %}
 
 {% block body %}
     <div class="content d-flex flex-column flex-column-fluid">
         <div class="subheader py-2 py-lg-4 subheader-solid" id="kt_subheader">
             <div class="container-fluid d-flex align-items-center justify-content-between flex-wrap flex-sm-nowrap">
                 <div class="d-flex align-items-center flex-wrap mr-2">
-                    <h5 class="text-dark font-weight-bold mt-2 mb-2 mr-5">Productos</h5>
+                    <h5 class="text-dark font-weight-bold mt-2 mb-2 mr-5">Categorias</h5>
                     <div class="subheader-separator subheader-separator-ver mt-2 mb-2 mr-5 bg-gray-200"></div>
                     <div class="d-flex align-items-center" id="kt_subheader_search">
                         <span class="text-dark-50 font-weight-bold" id="kt_subheader_total">
-                            0 registros</span>
-                        <form action="{{ path('products.index') }}" @submit.prevent="getProducts" class="ml-5">
+                            {{ pagination.getTotalItemCount }} registros</span>
+                        <form action="{{ path('categories.index') }}" id="search" class="ml-5">
                             <div class="input-group input-group-sm input-group-solid" style="max-width: 175px">
-                                <input type="text" name="q" v-model="q" class="form-control" placeholder="Buscar...">
-                                <div class="input-group-append">
+                                <input type="text" name="q" value="{{ app.request.query.get('q') }}" class="form-control" placeholder="Buscar...">
+                                <div class="input-group-append cursor-pointer" onclick="document.getElementById('search').submit();">
                                     <span class="input-group-text">
                                         <span class="svg-icon">
                                             <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px" height="24px" viewBox="0 0 24 24" version="1.1">
@@ -33,7 +33,6 @@
                     </div>
                 </div>
                 <div class="d-flex align-items-center">
-                    <a href="#" target="_blank" data-toggle="tooltip" title="" data-placement="left" data-original-title="Exportar todos los productos" class="btn btn-sm btn-secondary btn-icon mr-1"><i class="fas fa-file-pdf text-dark-50"></i></a>
                     <a href="{{ path('categories.new') }}" class="btn btn-light-primary btn-sm font-weight-bold ml-2"><i class="fa fa-plus"></i> Crear</a>
                 </div>
             </div>
@@ -46,7 +45,7 @@
                         <span class="card-icon">
                             <i class="flaticon2-list-2 text-primary"></i>
                         </span>
-                        <h3 class="card-label">Productos</h3>
+                        <h3 class="card-label">Categorias</h3>
                     </div>
                 </div>
                 <div class="card-body">
@@ -54,21 +53,29 @@
                         <thead>
                             <tr>
                                 <th>Id</th>
-                                <th>Categoria</th>
-                                <th>Ruta</th>
-                                <th>Status</th>                                            
+                                <th>Categoría</th>
+                                <th>Status</th>
+                                <th style="text-align: right;">Acciónes</th>
                             </tr>
                         </thead>
                         <tbody>
-                           {% for category in categories %}
-                           <tr class="clickable-row" data-href="{{ path('categories.show', { 'id': 1 }) }}">
-                            <td>{{ category.id }}</td>
-                            <td>{{ category.category }}</td>
-                            <td>
-                                
-                            </td>                                        
-                           </tr>
-                           {% endfor %}
+                            {% for category in pagination %}
+                            <tr data-href="{{ path('categories.show', { 'id': 1 }) }}">
+                                <td>{{ category.id }}</td>
+                                <td>{{ category.name }}</td>
+                                <td>
+                                    {% if category.active %}
+                                        <span class="label label-success label-inline label-pill">Activo</span>
+                                    {% else %}
+                                        <span class="label label-warning label-inline label-pill">Inactivo</span>
+                                    {% endif %}
+                                </td>
+                                <td align="right">
+                                    <a href="{{ path('categories.show', { id: category.id }) }}" data-toggle="tooltip" title="" data-placement="top" data-original-title="Ver categoría" class="btn btn-sm btn-secondary btn-icon mr-1"><i class="fas fa-eye text-dark-50"></i></a>
+                                    <span data-action="delete-entity" data-id="{{ category.id }}" data-toggle="tooltip" title="" data-placement="top" data-original-title="Eliminar categoría" class="btn btn-sm btn-danger btn-icon mr-1"><i class="fas fa-trash"></i></a>
+                                </td>
+                            </tr>
+                            {% endfor %}
                         </tbody>
                     </table>
                 </div>
@@ -77,3 +84,14 @@
     </div>
 {% endblock %}
 
+{% block scripts %}
+    <script type="text/javascript">
+        $("[data-action=delete-entity]").click(function(e){
+            e.preventDefault();
+
+            if(confirm("Realmente deseas eliminar este registro?")){
+                window.location = `{{ path('categories.index') }}/${ $(this).data('id') }/delete`
+            }
+        })
+    </script>
+{% endblock %}

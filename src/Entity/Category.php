@@ -3,12 +3,19 @@
 namespace App\Entity;
 
 use App\Repository\CategoryRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\{ Collection, ArrayCollection };
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity(repositoryClass=CategoryRepository::class)
+ * @ORM\HasLifecycleCallbacks
+ * @UniqueEntity(
+ *     fields={"name"},
+ *     errorPath="name",
+ *     message="Esta categoría ya existe."
+ * )
  */
 class Category
 {
@@ -20,6 +27,13 @@ class Category
     private $id;
 
     /**
+     * @Assert\NotBlank
+     * @Assert\Length(
+     *      min = 4,
+     *      max = 255,
+     *      minMessage = "El nombre no puede tener menos de {{ limit }} caracteres",
+     *      maxMessage = "El nombre no puede tener mas de {{ limit }} caracteres"
+     * )
      * @ORM\Column(type="string", length=255)
      */
     private $name;
@@ -30,7 +44,7 @@ class Category
     private $active;
 
     /**
-     * @ORM\Column(type="datetime")
+     * @ORM\Column(type="boolean", nullable=true, options={"default": 1})
      */
     private $createdAt;
 
@@ -47,6 +61,26 @@ class Category
     public function __construct()
     {
         $this->products = new ArrayCollection();
+    }
+
+    /**
+     * Gets triggered only on insert
+
+     * @ORM\PrePersist
+     */
+    public function onPrePersist()
+    {
+        $this->createdAt = new \DateTime("now");
+    }
+
+    /**
+     * Gets triggered every time on update
+
+     * @ORM\PreUpdate
+     */
+    public function onPreUpdate()
+    {
+        $this->updatedAt = new \DateTime("now");
     }
 
     public function getId(): ?int

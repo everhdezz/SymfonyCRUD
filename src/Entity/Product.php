@@ -3,10 +3,18 @@
 namespace App\Entity;
 
 use App\Repository\ProductRepository;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity(repositoryClass=ProductRepository::class)
+ * @ORM\HasLifecycleCallbacks
+ * @UniqueEntity(
+ *     fields={"code"},
+ *     errorPath="code",
+ *     message="This code is already in use."
+ * )
  */
 class Product
 {
@@ -18,12 +26,18 @@ class Product
     private $id;
 
     /**
+     * @ORM\Column(type="string", length=25)
+     */
+    private $code;
+
+    /**
+     * @Assert\NotBlank
      * @ORM\Column(type="string", length=255)
      */
     private $name;
 
     /**
-     * @ORM\Column(type="boolean", options={"default": 1})
+     * @ORM\Column(type="boolean", nullable=true, options={"default": 1})
      */
     private $active;
 
@@ -58,9 +72,24 @@ class Product
     private $price;
 
     /**
-     * @ORM\Column(type="string", length=25)
+     * Gets triggered only on insert
+
+     * @ORM\PrePersist
      */
-    private $code;
+    public function onPrePersist()
+    {
+        $this->createdAt = new \DateTime("now");
+    }
+
+    /**
+     * Gets triggered every time on update
+
+     * @ORM\PreUpdate
+     */
+    public function onPreUpdate()
+    {
+        $this->updatedAt = new \DateTime("now");
+    }
 
     public function getId(): ?int
     {
