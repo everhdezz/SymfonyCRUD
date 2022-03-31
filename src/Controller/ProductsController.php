@@ -3,10 +3,11 @@
 namespace App\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\{ Response, Request };
+use Symfony\Component\HttpFoundation\{ Response, Request, ResponseHeaderBag };
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Routing\Annotation\Route;
 use Knp\Component\Pager\PaginatorInterface;
+use PhpOffice\PhpSpreadsheet\{ Spreadsheet, Writer\Xlsx };
 use App\Repository\ProductRepository;
 use App\Form\ProductType;
 use App\Entity\Product;
@@ -56,6 +57,40 @@ class ProductsController extends AbstractController
         return $this->renderForm('products/new.html.twig', [
             'form' => $form,
         ]);
+    }
+
+    /**
+     * @Route("/products/export", name="products.export")
+     */
+    public function export(ProductRepository $repository): Response
+    {
+        $spreadsheet = new Spreadsheet();
+
+        $sheet = $spreadsheet->getActiveSheet();
+
+        $sheet->setTitle('Products');
+
+        // Add Headers
+        $sheet->getCell('A1')->setValue('Id');
+        $sheet->getCell('B1')->setValue('Categoria');
+        $sheet->getCell('C1')->setValue('Codigo');
+        $sheet->getCell('D1')->setValue('Nombre');
+        $sheet->getCell('E1')->setValue('Descripción');
+        $sheet->getCell('F1')->setValue('Marca');
+        $sheet->getCell('G1')->setValue('Status');
+        $sheet->getCell('H1')->setValue('Fecha de creación');
+        $sheet->getCell('I1')->setValue('Ultima edición');
+
+        // Add rows
+        $sheet->fromArray($repository->getData(),null, 'A2', true);
+        
+        $writer = new Xlsx($spreadsheet);
+
+        $temp_file = tempnam(sys_get_temp_dir(), 'products.xlsx');
+        
+        $writer->save($temp_file);
+        
+        return $this->file($temp_file, 'products.xlsx', ResponseHeaderBag::DISPOSITION_INLINE);
     }
 
     /**

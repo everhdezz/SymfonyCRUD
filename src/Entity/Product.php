@@ -59,7 +59,6 @@ class Product
     private $name;
 
     /**
-     * @Assert\NotBlank
      * @ORM\Column(type="boolean", options={"default": 1})
      */
     private $active;

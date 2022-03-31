@@ -58,4 +58,26 @@ class ProductRepository extends ServiceEntityRepository
 
         return $query;
     }
+
+    public function getData(): array
+    {
+        $list = [];
+        $products = $this->findAll();
+
+        foreach ($products as $product) {
+            $list[] = [
+                $product->getId(),
+                $product->getCategory(),
+                $product->getCode(),
+                $product->getName(),
+                $product->getDescription(),
+                $product->getBrand(),
+                $product->getActive() ? 'Si' : 'No',
+                $product->getCreatedAt(),
+                $product->getUpdatedAt(),
+            ];
+        }
+
+        return $list;
+    }
 }
