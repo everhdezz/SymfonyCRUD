@@ -65,14 +65,14 @@
                                 <td>{{ category.id }}</td>
                                 <td>{{ category.name }}</td>
                                 <td>
+                                    <span data-toggle="tooltip" title="" data-placement="top" data-original-title="{{ category.createdAt|date('Y-m-d H:i:s') }}">{{ category.createdAt|date('Y-m-d') }}</span>
+                                </td>
+                                <td>
                                     {% if category.active %}
                                         <span class="label label-success label-inline label-pill">Activo</span>
                                     {% else %}
                                         <span class="label label-warning label-inline label-pill">Inactivo</span>
                                     {% endif %}
-                                </td>
-                                <td>
-                                    <span data-toggle="tooltip" title="" data-placement="top" data-original-title="{{ category.createdAt|date('Y-m-d H:i:s') }}">{{ category.createdAt|date('Y-m-d') }}</span>
                                 </td>
                                 <td align="right">
                                     <a href="{{ path('categories.show', { id: category.id }) }}" data-toggle="tooltip" title="" data-placement="top" data-original-title="Ver categoría" class="btn btn-sm btn-secondary btn-icon mr-1"><i class="fas fa-eye text-dark-50"></i></a>

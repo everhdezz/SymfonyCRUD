@@ -11,11 +11,11 @@
                     <div class="subheader-separator subheader-separator-ver mt-2 mb-2 mr-5 bg-gray-200"></div>
                     <div class="d-flex align-items-center" id="kt_subheader_search">
                         <span class="text-dark-50 font-weight-bold" id="kt_subheader_total">
-                            0 registros</span>
-                        <form action="{{ path('products.index') }}" @submit.prevent="getProducts" class="ml-5">
+                            {{ pagination.getTotalItemCount }} registros</span>
+                        <form action="{{ path('products.index') }}" id="search" class="ml-5">
                             <div class="input-group input-group-sm input-group-solid" style="max-width: 175px">
-                                <input type="text" name="q" v-model="q" class="form-control" placeholder="Buscar...">
-                                <div class="input-group-append">
+                                <input type="text" name="q" value="{{ app.request.query.get('q') }}" class="form-control" placeholder="Buscar...">
+                                <div class="input-group-append cursor-pointer" onclick="document.getElementById('search').submit();">
                                     <span class="input-group-text">
                                         <span class="svg-icon">
                                             <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px" height="24px" viewBox="0 0 24 24" version="1.1">
@@ -33,8 +33,7 @@
                     </div>
                 </div>
                 <div class="d-flex align-items-center">
-                    <a href="#" target="_blank" data-toggle="tooltip" title="" data-placement="left" data-original-title="Exportar todos los productos" class="btn btn-sm btn-secondary btn-icon mr-1"><i class="fas fa-file-pdf text-dark-50"></i></a>
-                    <a href="{{ path('categories.new') }}" class="btn btn-light-primary btn-sm font-weight-bold ml-2"><i class="fa fa-plus"></i> Crear</a>
+                    <a href="{{ path('products.new') }}" class="btn btn-light-primary btn-sm font-weight-bold ml-2"><i class="fa fa-plus"></i> Crear</a>
                 </div>
             </div>
         </div>
@@ -54,26 +53,56 @@
                         <thead>
                             <tr>
                                 <th>Id</th>
+                                <th>Producto</th>
                                 <th>Categoria</th>
-                                <th>Ruta</th>
-                                <th>Status</th>                                            
+                                <th>Fecha creación</th>
+                                <th>Status</th>
+                                <th style="text-align: right;">Acciónes</th>
                             </tr>
                         </thead>
                         <tbody>
-                           {% for category in categories %}
-                           <tr class="clickable-row" data-href="{{ path('categories.show', { 'id': 1 }) }}">
-                            <td>{{ category.id }}</td>
-                            <td>{{ category.category }}</td>
-                            <td>
-                                
-                            </td>                                        
-                           </tr>
-                           {% endfor %}
+                            {% for product in pagination %}
+                            <tr>
+                                <td>{{ product.id }}</td>
+                                <td>
+                                    <span class="text-primary font-weight-bold">{{ product.code }}</span><br>
+                                    {{ product.name }}
+                                </td>
+                                <td>{{ product.category.name }}</td>
+                                <td>
+                                    <span data-toggle="tooltip" title="" data-placement="top" data-original-title="{{ product.createdAt|date('Y-m-d H:i:s') }}">{{ product.createdAt|date('Y-m-d') }}</span>
+                                </td>
+                                <td>
+                                    {% if product.active %}
+                                        <span class="label label-success label-inline label-pill">Activo</span>
+                                    {% else %}
+                                        <span class="label label-warning label-inline label-pill">Inactivo</span>
+                                    {% endif %}
+                                </td>
+                                <td align="right">
+                                    <a href="{{ path('products.show', { id: product.id }) }}" data-toggle="tooltip" title="" data-placement="top" data-original-title="Ver Producto" class="btn btn-sm btn-secondary btn-icon mr-1"><i class="fas fa-eye text-dark-50"></i></a>
+                                    <span data-action="delete-entity" data-id="{{ product.id }}" data-toggle="tooltip" title="" data-placement="top" data-original-title="Eliminar Producto" class="btn btn-sm btn-danger btn-icon mr-1"><i class="fas fa-trash"></i></a>
+                                </td>
+                            </tr>
+                            {% endfor %}
                         </tbody>
                     </table>
+
+                    {{ knp_pagination_render(pagination, 'packages/pagination/twitter_bootstrap_v4_pagination.html.twig') }}
                 </div>
             </div>
         </div>
     </div>
 {% endblock %}
 
+{% block scripts %}
+    <script type="text/javascript">
+        $("[data-action=delete-entity]").click(function(e){
+            e.preventDefault();
+
+            if(confirm("Realmente deseas eliminar este registro?")){
+                window.location = `{{ path('products.index') }}/${ $(this).data('id') }/delete`
+            }
+        })
+    </script>
+{% endblock %}

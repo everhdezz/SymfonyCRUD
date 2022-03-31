@@ -2,10 +2,11 @@
 
 namespace App\Form;
 
-use App\Entity\Product;
+use App\Entity\{ Product, Category };
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\Extension\Core\Type\{ TextType, CheckboxType, TextareaType };
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use Symfony\Component\Form\Extension\Core\Type\{ TextType, ChoiceType, NumberType, TextareaType };
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class ProductType extends AbstractType
@@ -13,7 +14,12 @@ class ProductType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('category')
+            ->add('category', EntityType::class, [
+                'label' => 'Categoria',
+                'class' => Category::class,
+                'choice_label' => 'name',
+                'placeholder' => '-- Selecciona',
+            ])
             ->add('code', TextType::class, [
                 'label' => 'Codigo',
                 'attr' => [
@@ -31,14 +37,26 @@ class ProductType extends AbstractType
                 'attr' => ['class' => 'tinymce'],
             ])
             ->add('brand', TextType::class, [
-                'label' => 'Descripción',
-            ])
-            ->add('price')
-            ->add('active', CheckboxType::class, [
-                'label' => 'Activo',
+                'label' => 'Marca',
                 'attr' => [
-                    ''
+                    'placeholder' => 'Marca del producto',
                 ]
+            ])
+            ->add('price', NumberType::class, [
+                'label' => 'Precio',
+                'attr' => [
+                    'placeholder' => '0.00',
+                ]
+            ])
+            ->add('active', ChoiceType::class, [
+                'label' => 'Status',
+                'choices'  => [
+                    'Activo' => 1,
+                    'Inactivo' => 0,
+                ],
+                'attr' => [
+                    'class' => 'form-control'
+                ],
             ])
         ;
     }

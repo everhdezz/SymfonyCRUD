@@ -22,8 +22,8 @@ class CategoriesController extends AbstractController
 
         $pagination = $paginator->paginate(
             $repository->search($q)
-                ->orderBy('c.active', 'DESC')
-                ->orderBy('c.createdAt', 'DESC'), // Query Builder
+                ->addOrderBy('c.active', 'DESC')
+                ->addOrderBy('c.createdAt', 'DESC'), // Query Builder
             $request->query->getInt('page', 1),
             $request->query->getInt('limit', 20),
         );

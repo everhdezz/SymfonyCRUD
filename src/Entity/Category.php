@@ -63,6 +63,12 @@ class Category
         $this->products = new ArrayCollection();
     }
 
+    public function __toString(): String
+    {
+        return $this->name;
+    }
+
+
     /**
      * Gets triggered only on insert
 
