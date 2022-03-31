@@ -39,7 +39,8 @@ class Category
     private $name;
 
     /**
-     * @ORM\Column(type="boolean")
+     * @Assert\NotBlank
+     * @ORM\Column(type="boolean", options={"default": 1})
      */
     private $active;
 

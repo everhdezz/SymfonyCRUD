@@ -13,7 +13,12 @@ use Doctrine\ORM\Mapping as ORM;
  * @UniqueEntity(
  *     fields={"code"},
  *     errorPath="code",
- *     message="This code is already in use."
+ *     message="Este código ya se encuentra en uso."
+ * )
+* @UniqueEntity(
+ *     fields={"name"},
+ *     errorPath="name",
+ *     message="Este producto ya existe."
  * )
  */
 class Product
@@ -26,18 +31,36 @@ class Product
     private $id;
 
     /**
-     * @ORM\Column(type="string", length=25)
+     * @Assert\NotBlank
+     * @Assert\Regex(
+     *     pattern     = "/^[a-z0-9]+$/i",
+     *     htmlPattern = "[a-zA-Z0-9]+"
+     * )
+     * @Assert\Length(
+     *      min = 4,
+     *      max = 10,
+     *      minMessage = "El código no puede tener menos de {{ limit }} caracteres",
+     *      maxMessage = "El código no puede tener mas de {{ limit }} caracteres"
+     * )
+     * @ORM\Column(type="string", length=10)
      */
     private $code;
 
     /**
      * @Assert\NotBlank
+     * @Assert\Length(
+     *      min = 4,
+     *      max = 255,
+     *      minMessage = "El nombre no puede tener menos de {{ limit }} caracteres",
+     *      maxMessage = "El nombre no puede tener mas de {{ limit }} caracteres"
+     * )
      * @ORM\Column(type="string", length=255)
      */
     private $name;
 
     /**
-     * @ORM\Column(type="boolean", nullable=true, options={"default": 1})
+     * @Assert\NotBlank
+     * @ORM\Column(type="boolean", options={"default": 1})
      */
     private $active;
 
@@ -47,17 +70,25 @@ class Product
     private $createdAt;
 
     /**
-     * @ORM\Column(type="datetime", nullable=true)
+     * @ORM\Column(type="datetime")
      */
     private $updatedAt;
 
     /**
-     * @ORM\Column(type="text", nullable=true)
+     * @Assert\NotBlank
+     * @ORM\Column(type="text")
      */
     private $description;
 
     /**
-     * @ORM\Column(type="string", length=50, nullable=true)
+     * @Assert\NotBlank
+     * @Assert\Length(
+     *      min = 1,
+     *      max = 50,
+     *      minMessage = "El nombre no puede tener menos de {{ limit }} caracteres",
+     *      maxMessage = "El nombre no puede tener mas de {{ limit }} caracteres"
+     * )
+     * @ORM\Column(type="string", length=50)
      */
     private $brand;
 
@@ -67,6 +98,7 @@ class Product
     private $category;
 
     /**
+     * @Assert\NotBlank
      * @ORM\Column(type="float")
      */
     private $price;
