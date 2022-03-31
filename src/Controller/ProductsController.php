@@ -23,7 +23,7 @@ class ProductsController extends AbstractController
 
         $pagination = $paginator->paginate(
             $repository->search($q)
-                ->addOrderBy('p.active', 'DESC')
+                ->addOrderBy('p.' . $request->query->get('sort_by', 'active'), $request->query->get('sort_type', 'asc'))
                 ->addOrderBy('p.createdAt', 'DESC'), // Query Builder
             $request->query->getInt('page', 1),
             $request->query->getInt('limit', 20),
